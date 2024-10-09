@@ -32,7 +32,8 @@ COPY ${SOURCE_CODE}/ ./
 
 RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags netgo -ldflags '-extldflags "-static"' -o /bin/driver ./backend/src/v2/cmd/driver/*.go
 
-FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+
+FROM registry.redhat.io/ubi8/ubi-minimal:latest
 
 WORKDIR /bin
 
