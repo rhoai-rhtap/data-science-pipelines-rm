@@ -14,8 +14,6 @@
 
 # Build arguments
 ARG SOURCE_CODE=.
-ARG CI_CONTAINER_VERSION="unknown"
-
 
 # Use ubi8/go-toolset as base image
 FROM registry.redhat.io/ubi8/go-toolset@sha256:4ec05fd5b355106cc0d990021a05b71bbfb9231e4f5bdc0c5316515edf6a1c96 as builder
@@ -33,16 +31,27 @@ COPY ${SOURCE_CODE}/go.sum ./
 # Copy the source
 COPY ${SOURCE_CODE}/ ./
 
-RUN GO111MODULE=on go build -o /bin/persistence_agent backend/src/agent/persistence/*.go
+RUN GO111MODULE=on go build -o /bin/controller backend/src/crd/controller/scheduledworkflow/*.go
 
-FROM registry.redhat.io/ubi8/ubi-minimal:latest
+
+FROM registry.redhat.io/ubi8/ubi-minimal@sha256:7583ca0ea52001562bd81a961da3f75222209e6192e4e413ee226cff97dbd48c
+
 WORKDIR /bin
 
-COPY --from=builder /bin/persistence_agent /bin/persistence_agent
+COPY --from=builder /bin/controller /bin/controller
+RUN chmod +x /bin/controller
 
 ENV NAMESPACE ""
 
 CMD /bin/controller --logtostderr=true --namespace=${NAMESPACE}
 
-LABEL name="ds-pipelines-persistenceagent" \
-      summary="DSP persistenceagent"
+LABEL com.redhat.component="odh-ml-pipelines-scheduledworkflow-v2-container" \
+      name="managed-open-data-hub/odh-ml-pipelines-scheduledworkflow-v2-rhel8" \
+      description="odh-ml-pipelines-scheduledworkflow-v2" \
+      summary="odh-ml-pipelines-scheduledworkflow-v2" \
+      maintainer="['managed-open-data-hub@redhat.com']" \
+      io.openshift.expose-services="" \
+      io.k8s.display-name="odh-ml-pipelines-scheduledworkflow-v2" \
+      io.k8s.description="odh-ml-pipelines-scheduledworkflow-v2" \
+      com.redhat.license_terms="https://www.redhat.com/licenses/Red_Hat_Standard_EULA_20191108.pdf"
+
