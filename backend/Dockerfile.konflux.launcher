@@ -35,7 +35,7 @@ COPY ${SOURCE_CODE}/ ./
 
 RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags netgo -ldflags '-extldflags "-static"' -o /bin/launcher-v2 ./backend/src/v2/cmd/launcher-v2/*.go
 
-FROM registry.redhat.io/ubi8/ubi-minimal:latest
+FROM registry.redhat.io/ubi8/ubi-minimal@sha256:7583ca0ea52001562bd81a961da3f75222209e6192e4e413ee226cff97dbd48c
 
 WORKDIR /bin
 
@@ -44,5 +44,13 @@ RUN chmod +x /bin/launcher-v2
 
 ENTRYPOINT ["/bin/launcher-v2"]
 
-LABEL name="ds-pipelines-launcher" \
-      summary="DSP launcher"
+LABEL com.redhat.component="odh-ml-pipelines-launcher-container" \
+      name="managed-open-data-hub/odh-ml-pipelines-launcher-rhel8" \
+      description="odh-ml-pipelines-launcher" \
+      summary="odh-ml-pipelines-launcher" \
+      maintainer="['managed-open-data-hub@redhat.com']" \
+      io.openshift.expose-services="" \
+      io.k8s.display-name="odh-ml-pipelines-launcher" \
+      io.k8s.description="odh-ml-pipelines-launcher" \
+      com.redhat.license_terms="https://www.redhat.com/licenses/Red_Hat_Standard_EULA_20191108.pdf"
+
