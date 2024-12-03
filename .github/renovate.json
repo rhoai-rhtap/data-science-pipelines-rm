@@ -55,7 +55,7 @@
     ],
     "ignorePaths": [
       "**/Dockerfile",
-      "!**/Dockerfile.konflux"
+      "!**/Dockerfile.konflux*"
     ],
     "pinDigests": true
   },
